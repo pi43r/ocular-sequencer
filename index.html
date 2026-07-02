@@ -3,23 +3,28 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>circular rhythms</title>
+        <title>ocular sequencer</title>
         <link rel="stylesheet" href="/src/style.css" />
     </head>
     <body>
         <!-- Start overlay -->
         <div id="start-screen" class="overlay">
             <div class="start-content">
-                <h1>circular rhythms</h1>
+                <img src="/public/ocular.svg" />
+
+                <h1>ocular sequencer</h1>
                 <p>webcam midi generator</p>
-                <button id="start-btn">start</button>
+                <div class="start-buttons">
+                    <button id="start-btn">start</button>
+                    <button id="start-info-btn">info</button>
+                </div>
             </div>
         </div>
 
         <!-- Controls panel -->
         <div id="ui-controls" class="hidden">
+            <button id="panel-toggle" title="collapse">−</button>
             <div class="panel">
-                <!-- Mode: bright / dark -->
                 <div class="group">
                     <span class="label">mode</span>
                     <div class="toggle-row">
@@ -28,7 +33,6 @@
                     </div>
                 </div>
 
-                <!-- Trigger: gate / hold -->
                 <div class="group">
                     <span class="label">trigger</span>
                     <div class="toggle-row">
@@ -36,48 +40,52 @@
                         <button id="btn-hold">hold</button>
                     </div>
                     <span class="hint"
-                        >gate: note plays while over blob &nbsp;|&nbsp; hold:
-                        sustain until next trigger</span
+                        >gate &mdash; while over blob &ensp;|&ensp; hold &mdash;
+                        sustain until next</span
                     >
                 </div>
 
-                <!-- Scale -->
                 <div class="group">
                     <span class="label">scale</span>
                     <select id="scale-select"></select>
                 </div>
 
-                <!-- Root note -->
                 <div class="group">
                     <span class="label">root</span>
                     <div class="root-row">
                         <select id="root-note"></select>
-                        <select id="root-octave">
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3" selected>3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                            <option value="6">6</option>
-                        </select>
+                        <select id="root-octave"></select>
                     </div>
                 </div>
 
-                <!-- Voices -->
                 <div class="group">
                     <span class="label"
-                        >voices <span id="voices-display">8</span></span
+                        >voices <span id="voices-display">12</span></span
                     >
                     <input
                         type="range"
                         id="voices-slider"
                         min="1"
-                        max="16"
-                        value="8"
+                        max="127"
+                        value="12"
                     />
                 </div>
 
-                <!-- Threshold -->
+                <div class="group">
+                    <span class="label"
+                        >spread <span id="spread-display">linear</span></span
+                    >
+                    <input
+                        type="range"
+                        id="spread-slider"
+                        min="-100"
+                        max="100"
+                        value="0"
+                        step="1"
+                    />
+                    <span class="hint">center &larr; &rarr; edge</span>
+                </div>
+
                 <div class="group">
                     <span class="label"
                         >threshold <span id="threshold-display">200</span></span
@@ -91,9 +99,11 @@
                     />
                 </div>
 
-                <!-- Image filters -->
                 <div class="group">
-                    <span class="label">brightness</span>
+                    <span class="label"
+                        >brightness
+                        <span id="brightness-display">100</span></span
+                    >
                     <input
                         type="range"
                         id="brightness-slider"
@@ -102,28 +112,33 @@
                         value="100"
                     />
                 </div>
+
                 <div class="group">
-                    <span class="label">saturation</span>
+                    <span class="label"
+                        >saturation <span id="saturation-display">0</span></span
+                    >
                     <input
                         type="range"
                         id="saturation-slider"
                         min="0"
                         max="300"
-                        value="100"
+                        value="0"
                     />
                 </div>
+
                 <div class="group">
-                    <span class="label">contrast</span>
+                    <span class="label"
+                        >contrast <span id="contrast-display">150</span></span
+                    >
                     <input
                         type="range"
                         id="contrast-slider"
                         min="50"
                         max="500"
-                        value="100"
+                        value="150"
                     />
                 </div>
 
-                <!-- Speed -->
                 <div class="group">
                     <span class="label"
                         >speed <span id="bpm-display">120</span> bpm</span
@@ -138,10 +153,169 @@
                     />
                 </div>
 
-                <!-- MIDI status -->
+                <div class="group">
+                    <span class="label">midi channel</span>
+                    <select id="channel-select">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                        <option value="11">11</option>
+                        <option value="12">12</option>
+                        <option value="13">13</option>
+                        <option value="14">14</option>
+                        <option value="15">15</option>
+                        <option value="16">16</option>
+                    </select>
+                </div>
+
                 <div class="midi-status" id="midi-status">
                     midi: not connected
                 </div>
+            </div>
+        </div>
+
+        <!-- Piano roll (top-left) -->
+        <div id="piano-roll">
+            <span class="pr-empty">—</span>
+        </div>
+
+        <!-- Legend (bottom-left) -->
+        <div id="legend">
+            <span class="leg-item"><span class="lg t">◆</span>triggered</span>
+            <span class="leg-item"><span class="lg a">◈</span>approaching</span>
+            <span class="leg-item"><span class="lg i">·</span>inactive</span>
+            <span class="leg-sep"></span>
+            <span class="leg-item"
+                >thresh&nbsp;<span id="legend-thresh">200</span></span
+            >
+            <span class="leg-item"
+                >spread&nbsp;<span id="legend-spread">linear</span></span
+            >
+            <span class="leg-item"
+                >voices&nbsp;<span id="legend-voices">12</span></span
+            >
+        </div>
+
+        <!-- Info toggle (bottom-right) -->
+        <button id="info-btn" title="info" class="hidden">?</button>
+
+        <!-- Fullscreen toggle (bottom-right) -->
+        <button id="fs-btn" title="fullscreen">⛶</button>
+
+        <!-- Info modal -->
+        <div id="info-overlay" class="overlay hidden">
+            <div class="info-modal">
+                <button id="info-close" class="info-close">&times;</button>
+                <h2>how it works</h2>
+                <ol>
+                    <li>
+                        your webcam feed appears inside a circular viewport (the
+                        "ocular").
+                    </li>
+                    <li>
+                        a thin radar line rotates clockwise at a bpm you
+                        control.
+                    </li>
+                    <li>
+                        sample points sit along the line — one per scale degree.
+                    </li>
+                    <li>
+                        when a point's pixel brightness crosses your threshold,
+                        a midi note fires.
+                    </li>
+                    <li>
+                        choose a scale, a root note, a spread curve, and up to
+                        127 voices.
+                    </li>
+                </ol>
+
+                <h2>controls</h2>
+                <table>
+                    <tr>
+                        <td>mode</td>
+                        <td>
+                            <code>bright</code> triggers on light areas,
+                            <code>dark</code> on shadows
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>trigger</td>
+                        <td>
+                            <code>gate</code> plays while over the blob,
+                            <code>hold</code> sustains until the next trigger
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>scale</td>
+                        <td>
+                            15 scales (chromatic, major, minor, pentatonic,
+                            blues, dorian, etc.)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>root</td>
+                        <td>note + octave (c1–b7)</td>
+                    </tr>
+                    <tr>
+                        <td>voices</td>
+                        <td>1–127 sample rings</td>
+                    </tr>
+                    <tr>
+                        <td>spread</td>
+                        <td>
+                            distribution curve — cluster notes toward the center
+                            or the rim
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>threshold</td>
+                        <td>brightness cutoff (0–255)</td>
+                    </tr>
+                    <tr>
+                        <td>speed</td>
+                        <td>rotation in bpm</td>
+                    </tr>
+                </table>
+                <p class="info-hint">double-click any slider to reset it.</p>
+
+                <h2>midi setup</h2>
+                <p>
+                    requires a chromium-based browser (chrome, edge, opera,
+                    arc). firefox &amp; safari do not support web midi.
+                </p>
+                <p>
+                    use <strong>iac driver</strong> (macos),
+                    <strong>loopmidi</strong> (windows), or
+                    <strong>snd-virmidi</strong> (linux) to route midi to your
+                    daw.
+                </p>
+
+                <h2>links &amp; credits</h2>
+                <p>
+                    <a
+                        href="https://bioclub.tokyo/en/events/biosonics/"
+                        target="_blank"
+                        rel="noopener"
+                        >biosonification study group</a
+                    >
+                    &mdash; tokyo biolab
+                </p>
+                <p>
+                    built by
+                    <a
+                        href="https://pitscher.net"
+                        target="_blank"
+                        rel="noopener"
+                        >pitscher.net</a
+                    >
+                </p>
             </div>
         </div>
 

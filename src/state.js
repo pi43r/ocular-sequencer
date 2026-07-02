@@ -1,54 +1,53 @@
 // ─── Application State ──────────────────────────────────────────────────────
-// Single source of truth for all UI-driven parameters.
 
-export const state = {
-  // Detection
+import { SCALES, extendIntervals } from "./scales.js";
+
+export const DEFAULTS = {
   threshold: 200,
-  mode: 'bright', // 'bright' | 'dark'
-
-  // Trigger behavior
-  holdNotes: false, // false = gate (play while over blob), true = hold (sustain until next trigger)
-
-  // Scale
-  scale: 'Pentatonic Minor',
-  rootNote: 0,  // semitone within octave: 0=C, 1=C#, ..., 11=B
-  rootOctave: 3, // C3 = MIDI 48 by default
-  voices: 8,     // number of sample points / rings
-
-  // Image filters
+  mode: "bright",
+  holdNotes: false,
+  scale: "Chromatic",
+  rootNote: 0,
+  rootOctave: 3,
+  voices: 12,
+  curve: 0,
   imgBrightness: 100,
   imgSaturation: 0,
-  imgContrast: 300,
-
-  // Motion
+  imgContrast: 150,
   speedBpm: 120,
+  midiChannel: 1,
 };
 
-// ─── Derived values ─────────────────────────────────────────────────────────
+export const state = {
+  ...DEFAULTS,
+  /** Recent note triggers for the piano-roll display. */
+  recentNotes: [],
+};
 
-import { SCALES } from './scales.js';
+// ─── Derived ────────────────────────────────────────────────────────────────
 
-/** Get the MIDI note number for the configured root. */
 export function getRootMidi() {
   return (state.rootOctave + 1) * 12 + state.rootNote;
 }
 
-/** Get the scale intervals for the currently selected scale. */
 export function getScaleIntervals() {
-  return SCALES[state.scale] || SCALES['Pentatonic Minor'];
+  const base = SCALES[state.scale] || SCALES["Chromatic"];
+  return extendIntervals(base, state.voices, getRootMidi());
 }
 
-/**
- * Map a normalized ring position (0..1) to a MIDI note,
- * using the current root, scale, and voice count.
- */
-export function getNoteForRing(normalizedR) {
+export function applyCurve(t, curve) {
+  if (curve === 0 || t <= 0 || t >= 1) return t;
+  const k = Math.pow(2, -curve * 2);
+  return Math.pow(t, k);
+}
+
+export function getNoteForRing(curvedT) {
   const intervals = getScaleIntervals();
-  const root = getRootMidi();
-  const maxVoices = Math.min(state.voices, intervals.length);
+  if (intervals.length === 0) return getRootMidi();
   const index = Math.min(
-    Math.floor(normalizedR * maxVoices),
+    Math.floor(curvedT * intervals.length),
     intervals.length - 1,
   );
-  return root + intervals[index];
+  const note = getRootMidi() + intervals[index];
+  return Math.max(0, Math.min(127, Math.round(note)));
 }

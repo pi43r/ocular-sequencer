@@ -1,5 +1,5 @@
 {
-  "name": "circular_rhythms",
+  "name": "ocular-sequencer",
   "module": "index.ts",
   "type": "module",
   "private": true,

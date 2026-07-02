@@ -1,28 +1,23 @@
 // ─── Web MIDI ────────────────────────────────────────────────────────────────
-// Handles MIDI access, port discovery, and note-on/off sending.
+
+import { state } from "./state.js";
 
 let midiOutputs = [];
 let currentOutput = null;
 
-/**
- * Request MIDI access and select the first available output.
- * @param {HTMLElement} statusEl — DOM element to display connection status
- * @returns {Promise<object|null>} the selected MIDI output, or null
- */
 export async function initMidi(statusEl) {
   try {
     const midiAccess = await navigator.requestMIDIAccess();
-
     for (const output of midiAccess.outputs.values()) {
       midiOutputs.push(output);
     }
 
     if (midiOutputs.length > 0) {
       currentOutput = midiOutputs[0];
-      statusEl.textContent = `midi: ${currentOutput.name}`;
-      statusEl.classList.add('connected');
+      statusEl.textContent = `midi ch${state.midiChannel} · ${currentOutput.name}`;
+      statusEl.classList.add("connected");
     } else {
-      statusEl.textContent = 'midi: no outputs found';
+      statusEl.textContent = "midi: no outputs found";
     }
 
     midiAccess.onstatechange = (e) => {
@@ -31,25 +26,26 @@ export async function initMidi(statusEl) {
 
     return currentOutput;
   } catch (err) {
-    console.warn('MIDI unavailable:', err);
-    statusEl.textContent = 'midi: access denied';
+    console.warn("MIDI unavailable:", err);
+    statusEl.textContent = "midi: access denied";
     return null;
   }
 }
 
-/** Send a MIDI Note On message. */
+/** Send a MIDI Note On message on the configured channel (1–16). */
 export function sendNoteOn(note, velocity = 100) {
   if (!currentOutput) return;
-  currentOutput.send([0x90, note, velocity]);
+  const channel = state.midiChannel - 1; // 0-indexed nibble
+  currentOutput.send([0x90 | channel, note, velocity]);
 }
 
-/** Send a MIDI Note Off message. */
+/** Send a MIDI Note Off message on the configured channel (1–16). */
 export function sendNoteOff(note) {
   if (!currentOutput) return;
-  currentOutput.send([0x80, note, 0]);
+  const channel = state.midiChannel - 1;
+  currentOutput.send([0x80 | channel, note, 0]);
 }
 
-/** Return the currently active MIDI output (may be null). */
 export function getOutput() {
   return currentOutput;
 }

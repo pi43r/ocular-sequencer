@@ -1,14 +1,13 @@
-/* ─── Circular Rhythms — Minimal Monospace ─────────────────────────────── */
+/* ─── Ocular Sequencer — Minimal Monospace ─────────────────────────────── */
 @import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&display=swap");
 
 :root {
     --bg: #0a0a0a;
-    --surface: #111111;
+    --surface: #111;
     --border: #2a2a2a;
     --text: #999;
     --text-dim: #555;
     --text-hi: #ddd;
-    --accent: #fff;
 }
 
 * {
@@ -82,6 +81,12 @@ canvas {
     margin: 0.75rem 0 1.5rem;
 }
 
+.start-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
 button {
     background: transparent;
     border: 1px solid var(--border);
@@ -108,41 +113,85 @@ button.active {
     border-color: var(--text-hi);
 }
 
-#start-btn {
+#start-btn,
+#start-info-btn {
     padding: 8px 28px;
     font-size: 0.75rem;
     border-color: var(--text);
     color: var(--text-hi);
 }
 
-#start-btn:hover {
+#start-btn:hover,
+#start-info-btn:hover {
     background: var(--text-hi);
     color: var(--bg);
+}
+
+#start-info-btn {
+    border-color: var(--border);
+    color: var(--text-dim);
+}
+
+#start-info-btn:hover {
+    border-color: var(--text);
 }
 
 /* ─── Controls Panel ──────────────────────────────────────────────────── */
 
 #ui-controls {
     position: absolute;
-    top: 16px;
-    right: 16px;
+    top: 12px;
+    right: 12px;
     z-index: 50;
-    transition:
-        opacity 0.4s,
-        transform 0.4s;
 }
 
 #ui-controls.hidden {
     opacity: 0;
-    transform: translateX(16px);
     pointer-events: none;
+}
+
+/* Toggle button — fixed position, never moves */
+#panel-toggle {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    font-size: 12px;
+    line-height: 18px;
+    text-align: center;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-dim);
+    z-index: 2;
+    cursor: pointer;
+    transition: color 0.15s;
+}
+
+#panel-toggle:hover {
+    color: var(--text);
 }
 
 .panel {
     background: var(--surface);
     border: 1px solid var(--border);
-    padding: 14px 16px;
+    padding: 20px 16px 14px;
     width: 260px;
+    transition:
+        opacity 0.2s,
+        max-height 0.3s;
+    overflow: hidden;
+}
+
+/* Collapsed: hide panel body, toggle stays visible at same position */
+#ui-controls.collapsed .panel {
+    max-height: 0;
+    opacity: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    border: none;
+    margin: 0;
 }
 
 .group {
@@ -174,7 +223,6 @@ button.active {
 
 .toggle-row {
     display: flex;
-    gap: 0;
 }
 
 .toggle-row button {
@@ -194,7 +242,6 @@ button.active {
     display: flex;
     gap: 4px;
 }
-
 .root-row select {
     flex: 1;
 }
@@ -218,7 +265,6 @@ select {
 select:focus {
     border-color: var(--text-dim);
 }
-
 select option {
     background: var(--bg);
     color: var(--text);
@@ -278,4 +324,280 @@ input[type="range"]::-moz-range-thumb {
 
 .midi-status.connected {
     color: var(--text);
+}
+
+/* ─── Piano Roll (top-left) ──────────────────────────────────────────── */
+
+#piano-roll {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 50;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 1px;
+    font-size: 0.6rem;
+    font-family: inherit;
+    pointer-events: none;
+}
+
+.pr-note {
+    color: var(--text);
+    transition: opacity 0.3s;
+}
+
+.pr-empty {
+    color: var(--text-dim);
+}
+
+/* ─── Legend (bottom-left, no border) ──────────────────────────────────── */
+
+#legend {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 0.6rem;
+    color: var(--text-dim);
+    white-space: nowrap;
+}
+
+.leg-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.leg-item span {
+    color: var(--text);
+}
+
+.lg {
+    font-size: 0.7rem;
+    line-height: 1;
+}
+
+.lg.t {
+    color: #fff;
+}
+.lg.a {
+    color: #aaa;
+}
+.lg.i {
+    color: #555;
+}
+
+.leg-sep {
+    width: 1px;
+    height: 10px;
+    background: var(--border);
+}
+
+/* ─── Info & Fullscreen Buttons (bottom-right) ──────────────────────── */
+
+#info-btn {
+    position: absolute;
+    bottom: 12px;
+    right: 44px;
+    z-index: 50;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    font-size: 13px;
+    line-height: 22px;
+    text-align: center;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-dim);
+}
+
+#info-btn:hover {
+    color: var(--text);
+    border-color: var(--text);
+}
+
+#info-btn.hidden {
+    display: none;
+}
+
+#fs-btn {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    z-index: 50;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    font-size: 14px;
+    line-height: 22px;
+    text-align: center;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-dim);
+}
+
+#fs-btn:hover {
+    color: var(--text);
+    border-color: var(--text);
+}
+
+/* ─── Info Modal ─────────────────────────────────────────────────────── */
+
+#info-overlay {
+    z-index: 200;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#info-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.info-modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 28px 32px;
+    max-width: 520px;
+    max-height: 85vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.info-modal h2 {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-hi);
+    text-transform: lowercase;
+    letter-spacing: 0.08em;
+    margin: 20px 0 10px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--border);
+}
+
+.info-modal h2:first-child {
+    margin-top: 0;
+}
+
+.info-modal ol {
+    padding-left: 18px;
+    margin: 0;
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: var(--text);
+}
+
+.info-modal ol li {
+    margin-bottom: 2px;
+}
+
+.info-modal table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    line-height: 1.6;
+}
+
+.info-modal td {
+    padding: 3px 0;
+    vertical-align: top;
+    color: var(--text);
+}
+
+.info-modal td:first-child {
+    width: 80px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding-right: 12px;
+}
+
+.info-modal code {
+    font-family: inherit;
+    color: var(--text-dim);
+}
+
+.info-modal p {
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: var(--text);
+    margin: 4px 0;
+}
+
+.info-modal a {
+    color: var(--text-hi);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--text-dim);
+}
+
+.info-modal a:hover {
+    color: #fff;
+    border-bottom-color: var(--text);
+}
+
+.info-hint {
+    color: var(--text-dim) !important;
+    font-size: 0.55rem !important;
+    margin-top: 6px !important;
+}
+
+.info-close {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    font-size: 16px;
+    line-height: 18px;
+    text-align: center;
+    border: none;
+    background: transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+}
+
+.info-close:hover {
+    color: var(--text-hi);
+}
+
+/* ─── Mobile ──────────────────────────────────────────────────────────── */
+
+@media (max-width: 600px) {
+    #ui-controls {
+        top: 4px;
+        right: 4px;
+    }
+    .panel {
+        width: 220px;
+        padding: 20px 12px 10px;
+    }
+    .group {
+        margin-bottom: 10px;
+    }
+    .label {
+        font-size: 0.55rem;
+    }
+    button,
+    select,
+    .hint {
+        font-size: 0.55rem;
+    }
+
+    #legend {
+        bottom: 4px;
+        left: 4px;
+        gap: 8px;
+        font-size: 0.5rem;
+    }
+    .lg {
+        font-size: 0.55rem;
+    }
+    .leg-sep {
+        height: 8px;
+    }
 }
