@@ -1,0 +1,21 @@
+{
+  "name": "circular_rhythms",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "vite": "^5.2.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "p5": "^2.2.3"
+  }
+}

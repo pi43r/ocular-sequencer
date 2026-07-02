@@ -1,0 +1,281 @@
+/* ─── Circular Rhythms — Minimal Monospace ─────────────────────────────── */
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&display=swap");
+
+:root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --border: #2a2a2a;
+    --text: #999;
+    --text-dim: #555;
+    --text-hi: #ddd;
+    --accent: #fff;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 11px;
+    letter-spacing: 0.02em;
+}
+
+/* ─── Canvas ──────────────────────────────────────────────────────────── */
+
+#canvas-container {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+canvas {
+    display: block;
+}
+
+/* ─── Start Overlay ───────────────────────────────────────────────────── */
+
+.overlay {
+    position: absolute;
+    inset: 0;
+    background: var(--bg);
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition:
+        opacity 0.4s,
+        visibility 0.4s;
+}
+
+.overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.start-content {
+    text-align: center;
+}
+
+.start-content h1 {
+    font-size: 1.6rem;
+    font-weight: 400;
+    color: var(--text-hi);
+    letter-spacing: 0.08em;
+    text-transform: lowercase;
+}
+
+.start-content p {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    margin: 0.75rem 0 1.5rem;
+}
+
+button {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 6px 16px;
+    font-size: 0.7rem;
+    font-family: inherit;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition:
+        background 0.15s,
+        color 0.15s,
+        border-color 0.15s;
+}
+
+button:hover {
+    border-color: var(--text);
+    color: var(--text-hi);
+}
+
+button.active {
+    background: var(--text-hi);
+    color: var(--bg);
+    border-color: var(--text-hi);
+}
+
+#start-btn {
+    padding: 8px 28px;
+    font-size: 0.75rem;
+    border-color: var(--text);
+    color: var(--text-hi);
+}
+
+#start-btn:hover {
+    background: var(--text-hi);
+    color: var(--bg);
+}
+
+/* ─── Controls Panel ──────────────────────────────────────────────────── */
+
+#ui-controls {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 50;
+    transition:
+        opacity 0.4s,
+        transform 0.4s;
+}
+
+#ui-controls.hidden {
+    opacity: 0;
+    transform: translateX(16px);
+    pointer-events: none;
+}
+
+.panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 14px 16px;
+    width: 260px;
+}
+
+.group {
+    margin-bottom: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.label {
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.label span {
+    color: var(--text);
+}
+
+.hint {
+    font-size: 0.55rem;
+    color: var(--text-dim);
+    line-height: 1.4;
+    margin-top: 2px;
+}
+
+/* ─── Toggle Buttons ──────────────────────────────────────────────────── */
+
+.toggle-row {
+    display: flex;
+    gap: 0;
+}
+
+.toggle-row button {
+    flex: 1;
+    padding: 4px 0;
+    font-size: 0.65rem;
+    text-align: center;
+}
+
+.toggle-row button:first-child {
+    border-right: none;
+}
+
+/* ─── Root Row ────────────────────────────────────────────────────────── */
+
+.root-row {
+    display: flex;
+    gap: 4px;
+}
+
+.root-row select {
+    flex: 1;
+}
+
+/* ─── Selects ─────────────────────────────────────────────────────────── */
+
+select {
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 4px 6px;
+    font-size: 0.65rem;
+    font-family: inherit;
+    letter-spacing: 0.04em;
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+select:focus {
+    border-color: var(--text-dim);
+}
+
+select option {
+    background: var(--bg);
+    color: var(--text);
+}
+
+/* ─── Range Sliders ───────────────────────────────────────────────────── */
+
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 20px;
+    background: transparent;
+    cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 1px;
+    background: var(--border);
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 10px;
+    width: 10px;
+    background: var(--text);
+    margin-top: -4.5px;
+    cursor: pointer;
+}
+
+input[type="range"]::-moz-range-track {
+    width: 100%;
+    height: 1px;
+    background: var(--border);
+    border: none;
+}
+
+input[type="range"]::-moz-range-thumb {
+    height: 10px;
+    width: 10px;
+    background: var(--text);
+    border: none;
+    border-radius: 0;
+}
+
+/* ─── MIDI Status ─────────────────────────────────────────────────────── */
+
+.midi-status {
+    font-size: 0.6rem;
+    color: var(--text-dim);
+    padding: 4px 0;
+    border-top: 1px solid var(--border);
+    margin-top: 4px;
+}
+
+.midi-status.connected {
+    color: var(--text);
+}

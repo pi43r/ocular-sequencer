@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>circular rhythms</title>
+        <link rel="stylesheet" href="/src/style.css" />
+    </head>
+    <body>
+        <!-- Start overlay -->
+        <div id="start-screen" class="overlay">
+            <div class="start-content">
+                <h1>circular rhythms</h1>
+                <p>webcam midi generator</p>
+                <button id="start-btn">start</button>
+            </div>
+        </div>
+
+        <!-- Controls panel -->
+        <div id="ui-controls" class="hidden">
+            <div class="panel">
+                <!-- Mode: bright / dark -->
+                <div class="group">
+                    <span class="label">mode</span>
+                    <div class="toggle-row">
+                        <button id="btn-bright">bright</button>
+                        <button id="btn-dark">dark</button>
+                    </div>
+                </div>
+
+                <!-- Trigger: gate / hold -->
+                <div class="group">
+                    <span class="label">trigger</span>
+                    <div class="toggle-row">
+                        <button id="btn-gate" class="active">gate</button>
+                        <button id="btn-hold">hold</button>
+                    </div>
+                    <span class="hint"
+                        >gate: note plays while over blob &nbsp;|&nbsp; hold:
+                        sustain until next trigger</span
+                    >
+                </div>
+
+                <!-- Scale -->
+                <div class="group">
+                    <span class="label">scale</span>
+                    <select id="scale-select"></select>
+                </div>
+
+                <!-- Root note -->
+                <div class="group">
+                    <span class="label">root</span>
+                    <div class="root-row">
+                        <select id="root-note"></select>
+                        <select id="root-octave">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3" selected>3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Voices -->
+                <div class="group">
+                    <span class="label"
+                        >voices <span id="voices-display">8</span></span
+                    >
+                    <input
+                        type="range"
+                        id="voices-slider"
+                        min="1"
+                        max="16"
+                        value="8"
+                    />
+                </div>
+
+                <!-- Threshold -->
+                <div class="group">
+                    <span class="label"
+                        >threshold <span id="threshold-display">200</span></span
+                    >
+                    <input
+                        type="range"
+                        id="threshold-slider"
+                        min="0"
+                        max="255"
+                        value="200"
+                    />
+                </div>
+
+                <!-- Image filters -->
+                <div class="group">
+                    <span class="label">brightness</span>
+                    <input
+                        type="range"
+                        id="brightness-slider"
+                        min="0"
+                        max="300"
+                        value="100"
+                    />
+                </div>
+                <div class="group">
+                    <span class="label">saturation</span>
+                    <input
+                        type="range"
+                        id="saturation-slider"
+                        min="0"
+                        max="300"
+                        value="100"
+                    />
+                </div>
+                <div class="group">
+                    <span class="label">contrast</span>
+                    <input
+                        type="range"
+                        id="contrast-slider"
+                        min="50"
+                        max="500"
+                        value="100"
+                    />
+                </div>
+
+                <!-- Speed -->
+                <div class="group">
+                    <span class="label"
+                        >speed <span id="bpm-display">120</span> bpm</span
+                    >
+                    <input
+                        type="range"
+                        id="speed-slider"
+                        min="30"
+                        max="300"
+                        step="1"
+                        value="120"
+                    />
+                </div>
+
+                <!-- MIDI status -->
+                <div class="midi-status" id="midi-status">
+                    midi: not connected
+                </div>
+            </div>
+        </div>
+
+        <!-- p5 canvas -->
+        <div id="canvas-container"></div>
+
+        <script type="module" src="/src/main.js"></script>
+    </body>
+</html>
