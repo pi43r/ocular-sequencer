@@ -16,15 +16,26 @@ function refresh() {
   for (const input of access.inputs.values()) {
     input.onmidimessage = ({ data }) => {
       if ((data[0] & 0xf0) === 0xb0 && data.length >= 3) {
-        onCC({ port: input.id, channel: (data[0] & 15) + 1, cc: data[1], value: data[2] });
+        onCC({ port: input.id, portName: input.name || input.id, manufacturer: input.manufacturer || '', channel: (data[0] & 15) + 1, cc: data[1], value: data[2] });
       }
     };
   }
   onPorts(outputs, output?.id, [...access.inputs.values()].filter(p => p.state === 'connected').length);
 }
-export function selectOutput(id) {
-  panic(); output = access?.outputs.get(id) || null;
+export function selectOutput(id, identity = {}) {
+  panic();
+  output = access?.outputs.get(id) || null;
+  if (!output && identity.name) {
+    output = [...(access?.outputs.values() || [])].find(port =>
+      port.state === 'connected' && port.name === identity.name &&
+      (!identity.manufacturer || (port.manufacturer || '') === identity.manufacturer),
+    ) || null;
+  }
+  return Boolean(output);
 }
+export function getOutputId() { return output?.id || ''; }
+export function getOutputIdentity() { return output ? { name: output.name || '', manufacturer: output.manufacturer || '' } : { name: '', manufacturer: '' }; }
+
 export function sendNoteOn(note, velocity, channel) {
   if (!output || output.state !== 'connected') return;
   const key = `${channel}:${note}`;

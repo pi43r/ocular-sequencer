@@ -52,6 +52,15 @@
                     <div id="radar-controls"></div>
                     <label class="checkbox-label"><input id="labels-toggle" type="checkbox"> note labels</label>
                 </details>
+                <details id="saved-setups"><summary>saved setups</summary>
+                    <label class="label" for="preset-name">setup name</label>
+                    <div class="save-row"><input id="preset-name" type="text" maxlength="40" placeholder="e.g. bright diatoms"><button id="save-preset">save</button></div>
+                    <label class="label" for="saved-preset-select">saved setups</label>
+                    <select id="saved-preset-select"><option value="">choose a setup…</option></select>
+                    <div class="save-row setup-actions"><button id="load-preset">load</button><button id="update-preset">update</button><button id="delete-preset">delete</button></div>
+                    <div class="save-row setup-actions"><button id="export-presets">export</button><button id="import-presets">import</button><input id="import-preset-file" type="file" accept="application/json,.json" hidden></div>
+                    <p class="hint" id="preset-status" role="status"></p>
+                </details>
                 <details><summary>midi routing</summary>
                     <label class="label" for="output-select">note output</label><select id="output-select"><option>no output</option></select>
                     <label class="label" for="channel-select">note channel</label><select id="channel-select"></select>

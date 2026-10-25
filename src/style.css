@@ -669,3 +669,9 @@ button.learn { display: none; }
 .panel summary { font-size: 10px; color: #888; }
 .panel summary:hover { color: #ddd; }
 #edge-controls { padding-top: 2px; }
+.save-row { display: flex; align-items: stretch; gap: 5px; margin-top: 5px; }
+.save-row input[type="text"] { min-width: 0; flex: 1; padding: 7px 8px; border: 1px solid var(--border); background: #090909; color: var(--text-hi); font: inherit; font-size: 10px; }
+.save-row button { padding: 5px 8px; font-size: 9px; }
+.setup-actions { display: grid; grid-template-columns: repeat(3, 1fr); }
+.setup-actions button { padding-inline: 3px; }
+#preset-status { font-size: 9px; overflow-wrap: anywhere; }
