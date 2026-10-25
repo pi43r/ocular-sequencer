@@ -32,7 +32,7 @@ function saveMappings() {
 const PRESET_STORAGE_KEY = 'ocular-saved-setups';
 const PRESET_VERSION = 1;
 const SAVED_STATE_KEYS = [
-  'mode', 'rangeLow', 'rangeHigh', 'edgeGain', 'steps', 'speedBpm', 'density',
+  'mode', 'rangeLow', 'rangeHigh', 'edgeGain', 'previewEdges', 'steps', 'speedBpm', 'density',
   'gate', 'dynamics', 'scale', 'rootNote', 'rootOctave', 'voices', 'curve',
   'imageLevel', 'showLabels', 'frozen', 'midiChannel',
 ];
@@ -65,7 +65,7 @@ function validatePreset(input) {
     const value = input.settings[key];
     if (key === 'mode' && ['bright', 'dark', 'edges'].includes(value)) settings[key] = value;
     else if (key === 'scale' && Object.hasOwn(SCALES, value)) settings[key] = value;
-    else if (key === 'showLabels' || key === 'frozen') { if (typeof value !== 'boolean') return null; settings[key] = value; }
+    else if (key === 'showLabels' || key === 'frozen' || key === 'previewEdges') { if (typeof value !== 'boolean') return null; settings[key] = value; }
     else if (key === 'rootNote' && Number.isInteger(value) && value >= 0 && value <= 11) settings[key] = value;
     else if (key === 'rootOctave' && Number.isInteger(value) && value >= 1 && value <= 7) settings[key] = value;
     else if (key === 'steps' && DIVISIONS.includes(value)) settings[key] = value;
@@ -119,6 +119,7 @@ function syncUI() {
   const mode = state.mode === 'edges' ? 'edge strength' : state.mode === 'bright' ? 'brightness' : 'darkness';
   $('range-hint').textContent = state.mode === 'edges' ? 'play boundaries · raise gain for faint structures' : 'select an intensity band · 0–100%';
   $('edge-controls').hidden = state.mode !== 'edges';
+  $('edge-preview-toggle').checked = state.previewEdges;
   for (const key of ['density', 'gate']) $(`${key}-slider`).closest('.slider-control').hidden = state.steps === 0;
   $('rhythm-hint').textContent = state.steps ? 'one sweep = four beats' : 'free scan · enter to play, leave to release';
   $('range-band').style.left = `${state.rangeLow}%`;
@@ -278,6 +279,7 @@ function restartBar() { panic(); state.restart++; $('performance-status').textCo
 $('freeze-btn').addEventListener('click', freezeScene);
 $('restart-btn').addEventListener('click', restartBar);
 $('labels-toggle').addEventListener('change', e => { state.showLabels = e.target.checked; });
+$('edge-preview-toggle').addEventListener('change', e => { state.previewEdges = e.target.checked; });
 $('preset-select').addEventListener('change', e => {
   const preset = PRESETS[e.target.value];
   if (!preset) return;

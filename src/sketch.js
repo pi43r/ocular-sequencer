@@ -8,7 +8,7 @@ import { isPulse, radarLayout } from './performance.js';
 
 export function createSketch() {
   return p => {
-    let capture, pg, phase = 0, lastStep = -1, signature = '', restart = state.restart;
+    let capture, pg, edgePreview, phase = 0, lastStep = -1, signature = '', restart = state.restart;
     let pins = [], active = [], started = [], releases = new Map();
     const reset = () => { panic(); releases.clear(); active = []; started = []; lastStep = -1; pins = []; };
     document.addEventListener('visibilitychange', () => {
@@ -49,6 +49,30 @@ export function createSketch() {
       p.imageMode(p.CENTER); p.image(pg, 0, 0, radius * 2 * 640 / 480, radius * 2);
       // Visual dimming never alters the luminance used for note detection.
       p.noStroke(); p.fill(10, 255 * (1 - state.imageLevel / 100)); p.circle(0, 0, radius * 2);
+      // A small, independent Sobel preview makes edge gain visible without
+      // replacing or recoloring the microscope image used for performance.
+      if (state.mode === 'edges' && state.previewEdges) {
+        const previewWidth = 160, previewHeight = 120;
+        if (!edgePreview) {
+          edgePreview = p.createGraphics(previewWidth, previewHeight);
+          edgePreview.pixelDensity(1);
+          edgePreview.loadPixels();
+        }
+        for (let y = 0; y < previewHeight; y++) {
+          for (let x = 0; x < previewWidth; x++) {
+            const strength = edgeIntensity(pg.pixels, 640, 480, x * 4, y * 4, state.edgeGain);
+            const index = (y * previewWidth + x) * 4;
+            edgePreview.pixels[index] = 235;
+            edgePreview.pixels[index + 1] = 245;
+            edgePreview.pixels[index + 2] = 255;
+            edgePreview.pixels[index + 3] = inRange(strength, state.rangeLow, state.rangeHigh)
+              ? Math.min(230, Math.round(40 + strength * 1.9))
+              : 0;
+          }
+        }
+        edgePreview.updatePixels();
+        p.image(edgePreview, 0, 0, radius * 2 * 640 / 480, radius * 2);
+      }
       p.drawingContext.restore();
       drawRadarFace(p, radius, phase, state);
       drawRadarLine(p, cos, sin, radius);

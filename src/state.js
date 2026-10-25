@@ -1,7 +1,7 @@
 import { SCALES, extendIntervals } from './scales.js';
 
 export const DEFAULTS = {
-  mode: 'bright', rangeLow: 55, rangeHigh: 100,
+  mode: 'bright', rangeLow: 55, rangeHigh: 100, previewEdges: false,
   scale: 'Pentatonic Minor', rootNote: 0, rootOctave: 3,
   voices: 8, curve: 0, speedBpm: 100, steps: 16,
   gate: 70, dynamics: 65, midiChannel: 1, density: 100, imageLevel: 85, edgeGain: 3,
