@@ -1,53 +1,18 @@
-// ─── Application State ──────────────────────────────────────────────────────
-
-import { SCALES, extendIntervals } from "./scales.js";
+import { SCALES, extendIntervals } from './scales.js';
 
 export const DEFAULTS = {
-  threshold: 200,
-  mode: "bright",
-  holdNotes: false,
-  scale: "Chromatic",
-  rootNote: 0,
-  rootOctave: 3,
-  voices: 12,
-  curve: 0,
-  imgBrightness: 100,
-  imgSaturation: 0,
-  imgContrast: 150,
-  speedBpm: 120,
-  midiChannel: 1,
+  mode: 'bright', rangeLow: 55, rangeHigh: 100,
+  scale: 'Pentatonic Minor', rootNote: 0, rootOctave: 3,
+  voices: 8, curve: 0, speedBpm: 100, steps: 16,
+  gate: 70, dynamics: 65, midiChannel: 1, density: 100, imageLevel: 85, edgeGain: 3,
 };
-
-export const state = {
-  ...DEFAULTS,
-  /** Recent note triggers for the piano-roll display. */
-  recentNotes: [],
-};
-
-// ─── Derived ────────────────────────────────────────────────────────────────
-
-export function getRootMidi() {
-  return (state.rootOctave + 1) * 12 + state.rootNote;
-}
-
-export function getScaleIntervals() {
-  const base = SCALES[state.scale] || SCALES["Chromatic"];
-  return extendIntervals(base, state.voices, getRootMidi());
-}
-
+export const state = { ...DEFAULTS, playing: true, frozen: false, panelOpen: true, showLabels: false, restart: 0, recentNotes: [] };
+export const getRootMidi = () => (state.rootOctave + 1) * 12 + state.rootNote;
+export const getScaleIntervals = () => extendIntervals(SCALES[state.scale] || SCALES.Chromatic, state.voices, getRootMidi());
 export function applyCurve(t, curve) {
-  if (curve === 0 || t <= 0 || t >= 1) return t;
-  const k = Math.pow(2, -curve * 2);
-  return Math.pow(t, k);
+  return Math.pow(t, Math.pow(2, -curve * 2));
 }
-
-export function getNoteForRing(curvedT) {
+export function getNoteForRing(index) {
   const intervals = getScaleIntervals();
-  if (intervals.length === 0) return getRootMidi();
-  const index = Math.min(
-    Math.floor(curvedT * intervals.length),
-    intervals.length - 1,
-  );
-  const note = getRootMidi() + intervals[index];
-  return Math.max(0, Math.min(127, Math.round(note)));
+  return getRootMidi() + intervals[Math.min(index, intervals.length - 1)];
 }

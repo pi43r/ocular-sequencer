@@ -63,7 +63,6 @@ export function extendIntervals(base, count, rootMidi) {
     let added = false;
     for (const interval of base) {
       if (result.length >= count) break;
-      if (octave > 0 && interval === 0) continue; // skip duplicate root
       const full = interval + octave * 12;
       if (full > maxSemitones) break;
       result.push(full);

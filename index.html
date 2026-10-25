@@ -10,7 +10,7 @@
         <!-- Start overlay -->
         <div id="start-screen" class="overlay">
             <div class="start-content">
-                <img src="/public/ocular.svg" />
+                <img src="/ocular.svg" alt="" />
 
                 <h1>ocular sequencer</h1>
                 <p>webcam midi generator</p>
@@ -25,159 +25,42 @@
         <div id="ui-controls" class="hidden">
             <button id="panel-toggle" title="collapse">−</button>
             <div class="panel">
-                <div class="group">
-                    <span class="label">mode</span>
-                    <div class="toggle-row">
-                        <button id="btn-bright">bright</button>
-                        <button id="btn-dark">dark</button>
-                    </div>
-                </div>
-
-                <div class="group">
-                    <span class="label">trigger</span>
-                    <div class="toggle-row">
-                        <button id="btn-gate" class="active">gate</button>
-                        <button id="btn-hold">hold</button>
-                    </div>
-                    <span class="hint"
-                        >gate &mdash; while over blob &ensp;|&ensp; hold &mdash;
-                        sustain until next</span
-                    >
-                </div>
-
-                <div class="group">
-                    <span class="label">scale</span>
-                    <select id="scale-select"></select>
-                </div>
-
-                <div class="group">
-                    <span class="label">root</span>
-                    <div class="root-row">
-                        <select id="root-note"></select>
-                        <select id="root-octave"></select>
-                    </div>
-                </div>
-
-                <div class="group">
-                    <span class="label"
-                        >voices <span id="voices-display">12</span></span
-                    >
-                    <input
-                        type="range"
-                        id="voices-slider"
-                        min="1"
-                        max="127"
-                        value="12"
-                    />
-                </div>
-
-                <div class="group">
-                    <span class="label"
-                        >spread <span id="spread-display">linear</span></span
-                    >
-                    <input
-                        type="range"
-                        id="spread-slider"
-                        min="-100"
-                        max="100"
-                        value="0"
-                        step="1"
-                    />
-                    <span class="hint">center &larr; &rarr; edge</span>
-                </div>
-
-                <div class="group">
-                    <span class="label"
-                        >threshold <span id="threshold-display">200</span></span
-                    >
-                    <input
-                        type="range"
-                        id="threshold-slider"
-                        min="0"
-                        max="255"
-                        value="200"
-                    />
-                </div>
-
-                <div class="group">
-                    <span class="label"
-                        >brightness
-                        <span id="brightness-display">100</span></span
-                    >
-                    <input
-                        type="range"
-                        id="brightness-slider"
-                        min="0"
-                        max="300"
-                        value="100"
-                    />
-                </div>
-
-                <div class="group">
-                    <span class="label"
-                        >saturation <span id="saturation-display">0</span></span
-                    >
-                    <input
-                        type="range"
-                        id="saturation-slider"
-                        min="0"
-                        max="300"
-                        value="0"
-                    />
-                </div>
-
-                <div class="group">
-                    <span class="label"
-                        >contrast <span id="contrast-display">150</span></span
-                    >
-                    <input
-                        type="range"
-                        id="contrast-slider"
-                        min="50"
-                        max="500"
-                        value="150"
-                    />
-                </div>
-
-                <div class="group">
-                    <span class="label"
-                        >speed <span id="bpm-display">120</span> bpm</span
-                    >
-                    <input
-                        type="range"
-                        id="speed-slider"
-                        min="30"
-                        max="300"
-                        step="1"
-                        value="120"
-                    />
-                </div>
-
-                <div class="group">
-                    <span class="label">midi channel</span>
-                    <select id="channel-select">
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                        <option value="7">7</option>
-                        <option value="8">8</option>
-                        <option value="9">9</option>
-                        <option value="10">10</option>
-                        <option value="11">11</option>
-                        <option value="12">12</option>
-                        <option value="13">13</option>
-                        <option value="14">14</option>
-                        <option value="15">15</option>
-                        <option value="16">16</option>
-                    </select>
-                </div>
-
-                <div class="midi-status" id="midi-status">
-                    midi: not connected
-                </div>
+                <div class="panel-heading">ocular <span>light → rhythm</span></div>
+                <div class="toggle-row transport"><button id="play-btn">pause</button><button id="freeze-btn" aria-pressed="false">freeze scene</button></div>
+                <div class="utility-row"><button id="restart-btn" title="restart bar (R)">restart</button><button id="panic-btn">all notes off</button><button id="map-btn" aria-pressed="false">midi map</button></div>
+                <p id="performance-status" class="hint" role="status"></p>
+                <section class="performance-section"><h2>image → notes</h2>
+                    <div class="toggle-row source-row"><button id="btn-bright">light</button><button id="btn-dark">dark</button><button id="btn-edges">edges</button></div>
+                    <p class="hint" id="range-hint"></p>
+                    <div id="range-controls"></div>
+                    <div class="range-preview" aria-hidden="true"><div id="range-band"></div></div>
+                    <div id="edge-controls" hidden></div>
+                </section>
+                <section class="performance-section"><h2>motion → rhythm</h2>
+                    <div id="rhythm-controls"></div>
+                    <p class="hint" id="rhythm-hint"></p>
+                </section>
+                <details><summary>harmony &amp; expression</summary>
+                    <label class="label" for="preset-select">starting point</label>
+                    <select id="preset-select"><option value="">custom</option><option value="drift">drift / spacious</option><option value="pulse">pulse / syncopated</option><option value="shadows">shadows / sparse</option></select>
+                    <label class="label" for="scale-select">scale</label><select id="scale-select"></select>
+                    <label class="label" for="root-note">root / octave</label><div class="root-row"><select id="root-note" aria-label="root note"></select><select id="root-octave" aria-label="root octave"></select></div>
+                    <div id="harmony-controls"></div>
+                    <div id="expression-controls"></div>
+                </details>
+                <details><summary>view</summary>
+                    <div id="radar-controls"></div>
+                    <label class="checkbox-label"><input id="labels-toggle" type="checkbox"> note labels</label>
+                </details>
+                <details><summary>midi routing</summary>
+                    <label class="label" for="output-select">note output</label><select id="output-select"><option>no output</option></select>
+                    <label class="label" for="channel-select">note channel</label><select id="channel-select"></select>
+                    <p class="hint">enable midi map, choose a slider’s learn button, then move a knob. absolute CC controls; mappings are saved.</p>
+                    <button id="clear-midi">clear mappings</button>
+                    <div class="midi-status" id="midi-status" role="status">midi: not connected</div>
+                </details>
+                <p class="hint" id="learn-status" role="status"></p>
+                <p class="hint" id="camera-status" role="status">waiting for camera — allow access in your browser.</p>
             </div>
         </div>
 
@@ -187,21 +70,7 @@
         </div>
 
         <!-- Legend (bottom-left) -->
-        <div id="legend">
-            <span class="leg-item"><span class="lg t">◆</span>triggered</span>
-            <span class="leg-item"><span class="lg a">◈</span>approaching</span>
-            <span class="leg-item"><span class="lg i">·</span>inactive</span>
-            <span class="leg-sep"></span>
-            <span class="leg-item"
-                >thresh&nbsp;<span id="legend-thresh">200</span></span
-            >
-            <span class="leg-item"
-                >spread&nbsp;<span id="legend-spread">linear</span></span
-            >
-            <span class="leg-item"
-                >voices&nbsp;<span id="legend-voices">12</span></span
-            >
-        </div>
+        <div id="legend"><span>◆ note memory</span><span id="legend-range"></span><span id="legend-rhythm"></span></div>
 
         <!-- Info toggle (bottom-right) -->
         <button id="info-btn" title="info" class="hidden">?</button>
@@ -213,89 +82,17 @@
         <div id="info-overlay" class="overlay hidden">
             <div class="info-modal">
                 <button id="info-close" class="info-close">&times;</button>
-                <h2>how it works</h2>
-                <ol>
-                    <li>
-                        your webcam feed appears inside a circular viewport (the
-                        "ocular").
-                    </li>
-                    <li>
-                        a thin radar line rotates clockwise at a bpm you
-                        control.
-                    </li>
-                    <li>
-                        sample points sit along the line — one per scale degree.
-                    </li>
-                    <li>
-                        when a point's pixel brightness crosses your threshold,
-                        a midi note fires.
-                    </li>
-                    <li>
-                        choose a scale, a root note, a spread curve, and up to
-                        127 voices.
-                    </li>
-                </ol>
-
-                <h2>controls</h2>
-                <table>
-                    <tr>
-                        <td>mode</td>
-                        <td>
-                            <code>bright</code> triggers on light areas,
-                            <code>dark</code> on shadows
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>trigger</td>
-                        <td>
-                            <code>gate</code> plays while over the blob,
-                            <code>hold</code> sustains until the next trigger
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>scale</td>
-                        <td>
-                            15 scales (chromatic, major, minor, pentatonic,
-                            blues, dorian, etc.)
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>root</td>
-                        <td>note + octave (c1–b7)</td>
-                    </tr>
-                    <tr>
-                        <td>voices</td>
-                        <td>1–127 sample rings</td>
-                    </tr>
-                    <tr>
-                        <td>spread</td>
-                        <td>
-                            distribution curve — cluster notes toward the center
-                            or the rim
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>threshold</td>
-                        <td>brightness cutoff (0–255)</td>
-                    </tr>
-                    <tr>
-                        <td>speed</td>
-                        <td>rotation in bpm</td>
-                    </tr>
-                </table>
-                <p class="info-hint">double-click any slider to reset it.</p>
-
-                <h2>midi setup</h2>
-                <p>
-                    requires a chromium-based browser (chrome, edge, opera,
-                    arc). firefox &amp; safari do not support web midi.
-                </p>
-                <p>
-                    use <strong>iac driver</strong> (macos),
-                    <strong>loopmidi</strong> (windows), or
-                    <strong>snd-virmidi</strong> (linux) to route midi to your
-                    daw.
-                </p>
+                <h2>play the light</h2>
+                <p>The camera stays in full color. A sweep reads the light in your image; one revolution is one 4/4 bar.</p>
+                <p>Edges detects local contrast boundaries in microscope structures while leaving the camera in color. Edge gain amplifies faint boundaries; the range selects edge strength. Press E to switch between edges and your previous light/dark mode.</p>
+                <p>Choose brightness for highlights or darkness for shadows. The range selects intensity: darkness 70–100% plays deep shadows; brightness 40–60% plays midtones.</p>
+                <p>The division slider selects off, 1/4, 1/8, 1/16, 1/32, or 1/64. Off follows structures continuously: enter to trigger, leave to release (100ms minimum hold). Density and length apply only to rhythmic divisions. Each rhythmic step samples the image. Notes in your chosen scale play when their points fall inside the range. Length controls how much of each step sounds; dynamics lets intensity shape velocity.</p>
+                <p>Freeze scene holds the camera image as a repeatable loop. Density distributes rhythmic pulses evenly across the bar; unlit rim ticks are rests. Restart bar returns the sweep to twelve o’clock. Presets change musical settings while preserving your root, MIDI routing, and mappings.</p>
+                <p>A small diamond stays where each note began, then fades. Pitch rises from the center outward; spread moves the sampling points without changing their notes.</p>
+                <h2>midi</h2>
+                <p>Select a note output and channel under midi routing. Connect that output to an instrument in your DAW. This app sends MIDI; it does not make sound itself.</p>
+                <p>To control a slider, enable midi map and click its learn button and move a MIDI knob or fader. Click again or press Escape to cancel. Mappings are saved in this browser. Use absolute 0–127 CC controls.</p>
+                <p>Double-click a slider to reset it. All notes off also pauses the instrument. Switching tabs pauses playback.</p>
 
                 <h2>links &amp; credits</h2>
                 <p>

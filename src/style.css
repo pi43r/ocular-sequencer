@@ -601,3 +601,71 @@ input[type="range"]::-moz-range-thumb {
         height: 8px;
     }
 }
+
+.panel { width: 286px; max-height: calc(100dvh - 24px); overflow-y: auto; scrollbar-width: thin; }
+.panel-heading { color: var(--text-hi); margin-bottom: 16px; letter-spacing: .08em; }
+section { border-top: 1px solid var(--border); margin-top: 16px; padding-top: 12px; }
+section h2 { font-size: 10px; font-weight: 400; color: var(--text-hi); margin-bottom: 12px; }
+.slider-control { margin-top: 12px; }
+.control-label { display: flex; align-items: center; gap: 6px; font-size: 10px; }
+.control-label output { margin-left: auto; color: var(--text-hi); }
+button.learn { font-size: 9px; padding: 3px 5px; min-width: 42px; }
+.hint { display: block; line-height: 1.6; margin-top: 8px; color: #888; }
+section .label, details .label { margin-top: 12px; }
+.range-preview { height: 8px; position: relative; margin-top: 8px; background: linear-gradient(to right, #111, #ddd); }
+.range-preview.dark { background: linear-gradient(to right, #ddd, #111); }
+#range-band { position: absolute; top: -2px; bottom: -2px; border: 1px solid white; }
+details { border-top: 1px solid var(--border); margin-top: 16px; padding-top: 12px; }
+summary { cursor: pointer; color: var(--text-hi); }
+#clear-midi { margin-top: 10px; }
+button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-visible { outline: 1px solid white; outline-offset: 3px; }
+#legend { flex-wrap: wrap; max-width: calc(100vw - 90px); white-space: normal; }
+@media (max-width: 600px) { .panel { width: 250px; max-height: calc(100dvh - 56px); } #legend { gap: 6px; } }
+
+/* Instrument chrome stays outside the radar's viewing area. */
+.panel { background: #0d0d0d; border-color: #222; padding: 24px 18px 18px; }
+.panel-heading { display: flex; justify-content: space-between; color: #eee; }
+.panel-heading span { color: #666; font-size: 9px; letter-spacing: 0; }
+.transport { margin-top: 12px; }
+.scene-tools { margin-top: 6px; }
+#performance-status { font-size: 9px; min-height: 29px; }
+select { padding: 7px 8px; }
+section h2 { color: #b5b5b5; letter-spacing: .06em; }
+.control-label label { color: #999; }
+.control-label output { font-size: 9px; }
+button.learn { border-color: transparent; color: #666; }
+button.learn:hover, button.learn:focus-visible { border-color: #555; color: #ddd; }
+button.learn.active { color: #111; }
+.checkbox-label { display: flex; align-items: center; gap: 8px; margin-top: 14px; font-size: 10px; }
+input[type="checkbox"] { accent-color: #ddd; }
+#piano-roll { top: 24px; left: 24px; gap: 5px; font-size: 10px; }
+#legend { left: 24px; bottom: 20px; color: #777; gap: 16px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+@media (max-width: 800px) {
+  #ui-controls { top: auto; right: 12px; left: 12px; bottom: 46px; }
+  .panel { width: 100%; max-height: calc(48dvh - 46px); padding-top: 24px; }
+  #ui-controls.collapsed { left: auto; top: 12px; bottom: auto; }
+  #legend { left: 12px; bottom: 12px; font-size: 8px; gap: 8px; }
+  #piano-roll { left: 12px; top: 12px; font-size: 9px; }
+}
+
+/* Live controls: signal and timing stay visible, setup folds away. */
+[hidden] { display: none !important; }
+.panel .panel-heading { margin-bottom: 10px; }
+.utility-row { display: flex; gap: 4px; margin-top: 6px; }
+.utility-row button { flex: 1; padding: 5px 2px; font-size: 9px; border-color: transparent; }
+.utility-row button:hover { border-color: #444; }
+.utility-row button.active { border-color: #ddd; }
+.performance-section { margin-top: 12px; padding-top: 10px; }
+.performance-section h2 { font-size: 9px; margin-bottom: 8px; color: #777; }
+.source-row button { padding: 6px; }
+.slider-control { margin-top: 9px; }
+#performance-status { min-height: 0; font-size: 9px; }
+#performance-status:empty, #learn-status:empty, #camera-status:empty { display: none; }
+button.learn { display: none; }
+.mapping button.learn { display: block; }
+.mapping .control-label label { font-size: 9px; }
+.panel details { margin-top: 12px; padding-top: 10px; }
+.panel summary { font-size: 10px; color: #888; }
+.panel summary:hover { color: #ddd; }
+#edge-controls { padding-top: 2px; }

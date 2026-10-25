@@ -1,51 +1,43 @@
-// ─── Web MIDI ────────────────────────────────────────────────────────────────
+let access, output;
+let onCC = () => {}, onPorts = () => {};
+const sounding = new Map();
 
-import { state } from "./state.js";
-
-let midiOutputs = [];
-let currentOutput = null;
-
-export async function initMidi(statusEl) {
-  try {
-    const midiAccess = await navigator.requestMIDIAccess();
-    for (const output of midiAccess.outputs.values()) {
-      midiOutputs.push(output);
-    }
-
-    if (midiOutputs.length > 0) {
-      currentOutput = midiOutputs[0];
-      statusEl.textContent = `midi ch${state.midiChannel} · ${currentOutput.name}`;
-      statusEl.classList.add("connected");
-    } else {
-      statusEl.textContent = "midi: no outputs found";
-    }
-
-    midiAccess.onstatechange = (e) => {
-      console.log(e.port.name, e.port.manufacturer, e.port.state);
+export async function initMidi(ports, cc) {
+  onPorts = ports;
+  onCC = cc;
+  if (!navigator.requestMIDIAccess) throw new Error('Web MIDI is unavailable in this browser');
+  access = await navigator.requestMIDIAccess();
+  access.onstatechange = refresh;
+  refresh();
+}
+function refresh() {
+  const outputs = [...access.outputs.values()].filter(p => p.state === 'connected');
+  if (!outputs.includes(output)) { panic(); output = outputs[0] || null; }
+  for (const input of access.inputs.values()) {
+    input.onmidimessage = ({ data }) => {
+      if ((data[0] & 0xf0) === 0xb0 && data.length >= 3) {
+        onCC({ port: input.id, channel: (data[0] & 15) + 1, cc: data[1], value: data[2] });
+      }
     };
-
-    return currentOutput;
-  } catch (err) {
-    console.warn("MIDI unavailable:", err);
-    statusEl.textContent = "midi: access denied";
-    return null;
   }
+  onPorts(outputs, output?.id, [...access.inputs.values()].filter(p => p.state === 'connected').length);
 }
-
-/** Send a MIDI Note On message on the configured channel (1–16). */
-export function sendNoteOn(note, velocity = 100) {
-  if (!currentOutput) return;
-  const channel = state.midiChannel - 1; // 0-indexed nibble
-  currentOutput.send([0x90 | channel, note, velocity]);
+export function selectOutput(id) {
+  panic(); output = access?.outputs.get(id) || null;
 }
-
-/** Send a MIDI Note Off message on the configured channel (1–16). */
-export function sendNoteOff(note) {
-  if (!currentOutput) return;
-  const channel = state.midiChannel - 1;
-  currentOutput.send([0x80 | channel, note, 0]);
+export function sendNoteOn(note, velocity, channel) {
+  if (!output || output.state !== 'connected') return;
+  const key = `${channel}:${note}`;
+  if (sounding.has(key)) sendNoteOff(note, channel);
+  output.send([0x90 | (channel - 1), note, velocity]);
+  sounding.set(key, { note, channel, output });
 }
-
-export function getOutput() {
-  return currentOutput;
+export function sendNoteOff(note, channel) {
+  const key = `${channel}:${note}`;
+  const entry = sounding.get(key);
+  if (entry?.output.state === 'connected') entry.output.send([0x80 | (channel - 1), note, 0]);
+  sounding.delete(key);
+}
+export function panic() {
+  for (const { note, channel } of [...sounding.values()]) sendNoteOff(note, channel);
 }
